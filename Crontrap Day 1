@@ -1,0 +1,28 @@
+rule crontrap
+{
+    meta:
+        description = "CronTrap"
+        author = "Jaeysh"
+        MITRE = "T1027 - Obfuscated Files or Information, T1036 - Masquerading, T1041 - Exfiltration Over C2 Channel, T1059 - Command and Scripting Interpreter, T1071 - Application Layer Protocol, T1072 - Software Deployment Tools, T1132 - Data Encoding, T1204 - User Execution, T1218 - Signed Binary Proxy Execution, T1564 - Hide Artifacts, T1566 - Phishing, T1572 - Protocol Tunneling, T1553 - Subvert Trust Controls, T1113 - Screen Capture, T1105 - Ingress Tool Transfer, T1547 - Boot or Logon Autostart Execution"
+        reference = "https://www.securonix.com/blog/crontrap-emulated-linux-environments-as-the-latest-tactic-in-malware-staging/, https://otx.alienvault.com/pulse/672a06a256af1a0f40f8d4b8, https://contagiodump.blogspot.com/2024/11/2024-11-04-crontrap-emulated-linux.html"
+
+    strings:
+        
+        $sha256_1 = "002f9cd9ffa4b81301d003acd9fb3fbba1262e593b4f2e56a085b62a50e76510"
+        $sha256_2 = "0618bb997462f350bc4402c1a5656b38bedc278455823ac249fd5119868d3df4"
+        $sha256_3 = "3e6a47da0a226a4c98fb53a06ec1894b4bfd15e73d0cea856b7d2a001cada7e9"
+        $sha256_4 = "ce26aac9ba7be60bfb998ba6add6b34da5a68506e9fea9844dc44bafe3cab676"
+        $sha256_6 = "9a33ea831edf83cb8775311963f52299f1488a89651bd3471cc8f1c70f08a36c"
+
+     
+        $sha1_1   = "888d9beb279870a3b639213e49585e50bdc1426a"
+
+      
+        $md5_1    = "6bda1bf74b65c81b0d685cec79715079"
+
+        
+        $ip_1     = "18.208.230.174"
+
+    condition:
+        any of them
+}
