@@ -48,9 +48,7 @@ rule Latrodectus
         $ip_4 = "103.27.202.123"
 
         
-        $mutex_1 = "Global\\LATRODECTUS_MUTEX"
-        $mutex_2 = "Global\\LS_MALWARE_INSTANCE"
-
+  
     condition:
         uint16(0) == 0x5A4D and 
         filesize < 500KB and 
