@@ -1,0 +1,65 @@
+import "hash"
+
+rule SnipBot
+{
+    meta:
+        description   = "SnipBot"
+        author        = "Jaeysh"
+        MalwareFamily = "ROMCOM"
+        MITRE         = "T1113 - Screen Capture, T1033 - System Owner/User Discovery, T1574.001 - DLL Search Order Hijacking, T1082 - System Information Discovery, T1005 - Data from Local System, T1140 - Deobfuscate/Decode Files or Information, T1055 - Process Injection, T1021.002 - SMB/Windows Admin Shares, T1112 - Modify Registry, T1016 - System Network Configuration Discovery, T1083 - File and Directory Discovery, T1074 - Data Staged, T1497 - Virtualization/Sandbox Evasion, T1057 - Process Discovery, T1547.001 - Registry Run Keys / Startup Folder, T1078 - Valid Accounts, T1027 - Obfuscated Files or Information, T1012 - Query Registry, T1059.003 - Windows Command Shell, T1518 - Software Discovery, T1021.001 - Remote Desktop Protocol"
+        reference     = "https://cert.gov.ua/article/6280099, https://unit42.paloaltonetworks.com/snipbot-romcom-malware-variant/, https://contagiodump.blogspot.com/2024/09/2024-09-23-snipbot-romcom-multi-stage.html, https://otx.alienvault.com/pulse/66fcd7325dcac4500971372a"
+        date          = "26-02-2025"
+
+    strings:
+        $regk  = "HKCU\\SOFTWARE\\AppDataSoft"
+        $regk1 = "HKCU\\SOFTWARE\\AppDataHigh"
+
+        $Path1 = "%LOCALAPPDATA%\\KeyStore"
+        $Path2 = "%LOCALAPPDATA%\\DataCache"
+        $Path3 = "%LOCALAPPDATA%\\AppTemp"
+
+        $URL1  = "xeontime.com"
+        $URL2  = "linedrv.com"
+        $URL3  = "drv2ms.com"
+        $URL4  = "olminx.com"
+        $URL5  = "adobe.cloudcreative.digital"
+        $URL6  = "ilogicflow.com"
+
+        $CA   = { 3B 0E 38 79 26 6F 3B C9 82 25 B3 90 }
+        $CA2  = { 29 9B 8C D6 80 9B EB 7A FE 6A A1 CE CC }
+        $CA3  = { EC CE 27 DD 88 6C C2 90 43 74 62 21 B4 FF 40 90 }
+        $CA4  = { A9 4E F8 7C 15 32 9C 88 4C 86 63 2B 46 02 E4 CE }
+        $CA5  = { 0B C7 77 F8 8D DF 5F 3C E4 79 45 2F }
+        $CA6  = { D5 5F AE DB A8 57 A0 A7 47 95 D4 E2 A3 A4 20 76 }
+        $CA7  = { E6 71 DA 87 62 63 D1 82 40 48 34 91 1D 63 18 01 }
+        $CA8  = { 4D 69 76 36 52 EF 60 95 4C DF 06 52 32 5C 0F 19 }
+        $CA9  = { 6E 1C D9 E8 F4 83 A6 A4 47 3E A7 77 39 6A 7F 7D }
+        $CA10 = { 44 78 46 AA 56 C0 D1 8E 4D 6F 4A FB 08 4E C5 12 }
+
+    condition:
+        
+        (1 of ($reg*)) and
+
+        
+        (1 of ($Path*)) and
+
+        
+        (1 of ($URL*)) and
+
+        
+        (any of ($CA*)) and
+
+        
+        (
+            hash.sha256(0, filesize) == "0be3116a3edc063283f3693591c388eec67801cdd140a90c4270679e01677501" or
+            hash.sha256(0, filesize) == "2c327087b063e89c376fd84d48af7b855e686936765876da2433485d496cb3a4" or
+            hash.sha256(0, filesize) == "5390ba094cf556f9d7bbb00f90c9ca9e04044847c3293d6e468cb0aaeb688129" or
+            hash.sha256(0, filesize) == "57e59b156a3ff2a3333075baef684f49c63069d296b3b036ced9ed781fd42312" or
+            hash.sha256(0, filesize) == "5b30a5b71ef795e07c91b7a43b3c1113894a82ddffc212a2fa71eebc078f5118" or
+            hash.sha256(0, filesize) == "5c71601717bed14da74980ad554ad35d751691b2510653223c699e1f006195b8" or
+            hash.sha256(0, filesize) == "a2f2e88a5e2a3d81f4b130a2f93fb60b3de34550a7332895a084099d99a3d436" or
+            hash.sha256(0, filesize) == "b9677c50b20a1ed951962edcb593cce5f1ed9c742bc7bff827a6fc420202b045" or
+            hash.sha256(0, filesize) == "cfb1e3cc05d575b86db6c85267a52d8f1e6785b106797319a72dd6d19b4dc317" or
+            hash.sha256(0, filesize) == "f74ebf0506dc3aebc9ba6ca1e7460d9d84543d7dadb5e9912b86b843e8a5b671"
+        )
+}
