@@ -1,0 +1,108 @@
+import "hash"
+
+rule Ghost
+{
+    meta:
+        description = "Ghost Ransomware "
+        author      = "Jaeysh"
+        date        = "2025-02-26"
+        reference   = "https://www.cisa.gov/news-events/cybersecurity-advisories/aa25-050a"
+
+    strings:
+        
+        $fn_sock           = "sock.txt"
+        $f_isx            = "isx.txt"
+        $fn_main           = "main.txt"
+        $fn_sp             = "sp.txt"
+        $fn_x86            = "x86.log"
+        $fn_locker         = "Locker.exe"
+        $fn_elysium        = "ElysiumO.exe"
+        $fn_ghost          = "Ghost.exe"
+        $fn_cring_exe      = "Cring.exe"
+       
+        $fn_iex_combo      = "iex.txt; iex.exe; pro.txt"
+        
+        $fn_pro_iex_combo  = "pro.txt; iex.exe; iex.txt"
+        
+        $fn_cring_bin_combo= "Cring.exe; f7d270ca0f2b4d21830787431f881cd004b2eb102cc3048c6b4d69cb775511c8.bin"
+
+       
+        $em_rainbowforever_skiff   = "rainbowforever@skiff.com"
+        $em_rainbowforever_tutanota= "rainbowforever@tutanota.com"
+        $em_ghost1998_tutamail     = "ghost1998@tutamail.com"
+        $em_genesis1337_tutanota   = "genesis1337@tutanota.com"
+        $em_summerkiller_mailfence = "summerkiller@mailfence.com"
+        $em_summerkiller_tutanota  = "summerkiller@tutanota.com"
+        $em_ghostsbackup_skiff     = "ghostsbackup@skiff.com"
+        $em_retryit1998_tutamail   = "retryit1998@tutamail.com"
+        $em_retryit1998_mailfence  = "retryit1998@mailfence.com"
+        $em_ghosts1337_skiff       = "ghosts1337@skiff.com"
+        $em_ghosts1337_tutaio      = "ghosts1337@tuta.io"
+        $em_cringghost_skiff       = "cringghost@skiff.com"
+        $em_evilcorp_skiff         = "evilcorp@skiff.com"
+        $em_lockhelp1998_skiff     = "lockhelp1998@skiff.com"
+        $em_shadowghost_skiff      = "shadowghost@skiff.com"
+        $em_shadowghosts_tutanota  = "shadowghosts@tutanota.com"
+        $em_rsacrpthelp_skiff      = "rsacrpthelp@skiff.com"
+        $em_hsharada_skiff         = "hsharada@skiff.com"
+        $em_d3svc_tutaio           = "d3svc@tuta.io"
+        $em_d3crypt_onionmail      = "d3crypt@onionmail.org"
+        $em_sdghost_onionmail      = "sdghost@onionmail.org"
+        $em_fortihooks_proton      = "fortihooks@protonmail.com"
+        $em_rsahelp_proton         = "rsahelp@protonmail.com"
+        $em_just4money_tutanota    = "just4money@tutanota.com"
+        $em_fileunlock_onionmail   = "fileunlock@onionmail.org"
+        $em_crptbackup_skiff       = "crptbackup@skiff.com"
+        $em_asauribe_tutanota      = "asauribe@tutanota.com"
+        $em_kellyreiff_tutanota    = "kellyreiff@tutanota.com"
+        $em_rheisler_skiff         = "r.heisler@skiff.com"
+        $em_ghostbackup_skiff      = "ghostbackup@skiff.com"
+        $em_d3svc_tuta             = "d3svc@tuta.io"        
+        $em_fortihooks_proton2     = "fortihooks@protonmail.com"  
+        $em_webroothooks_tutanota  = "webroothooks@tutanota.com"
+        $em_asauribe_tutanota2     = "asauribe@tutanota.com" d
+        $em_eternalnightmare_tutanota = "eternalnightmare@tutanota.com"
+
+       
+        $url_rejitto    = "rejitto.com/hfs"
+
+    condition:
+    
+      
+        any of ($fn_* or $em_* or $url_*) or
+        (
+            
+            hash.md5(0, filesize) == "DB38EF2E3D4D8CB785DF48F458B35090" or
+            hash.md5(0, filesize) == "625BD7275E1892EAC50A22F8B4A6355D" or
+            hash.md5(0, filesize) == "A2FD181F57548C215AC6891D000EC6B9" or
+            hash.md5(0, filesize) == "FF52FDF84448277B1BC121F592F753C5" or
+            hash.md5(0, filesize) == "0A5C4AD3EC240FBFD00BDC1D36BD54EB" or
+            hash.md5(0, filesize) == "C3B8F6D102393B4542E9F951C9435255" or
+            hash.md5(0, filesize) == "EF6A213F59F3FBEE2894BD6734BBAED2" or
+            hash.md5(0, filesize) == "D1C5E7B8E937625891707F8B4B594314" or
+            hash.md5(0, filesize) == "C9E35B5C1DC8856DA25965B385A26EC4" or
+            hash.md5(0, filesize) == "29E44E8994197BDB0C2BE6FC5DFC15C2" or
+            hash.md5(0, filesize) == "34B3009590EC2D361F07CAC320671410" or
+            hash.md5(0, filesize) == "AC58A214CE7DEB3A578C10B97F93D9C3" or
+            hash.md5(0, filesize) == "C5D712F82D5D37BB284ACD4468AB3533" or
+            hash.md5(0, filesize) == "D9C019182D88290E5489CDF3B607F982" or
+
+          
+            hash.sha1(0, filesize) == "0979B2202E650444FFE61D9762CB756E7CDD6BF0" or
+            hash.sha1(0, filesize) == "92E529AEFD28E6A32B0AB9EF2289D211ABBE435D" or
+            hash.sha1(0, filesize) == "0183CF7515729EDDDC070ED0D564222B1D1E76D6" or
+            hash.sha1(0, filesize) == "F031BBA881A735E45B757548B9B981CC2DCD87EC" or
+            hash.sha1(0, filesize) == "44396E35B328247DAFD23B4A26B9D69C0011F54A" or
+            hash.sha1(0, filesize) == "3426E8DCB104D9B01874498FB44C6E460228A9A0" or
+
+            
+            hash.sha256(0, filesize) == "E0821121726DBE78C6423AF0F46B2E938ACF8CE74D4674751AF4030D84BE972A" or
+            hash.sha256(0, filesize) == "4A324FC6AB18F552B8669404219BA4F16AD167C6E534B61F5BC7831534EB23A1" or
+            hash.sha256(0, filesize) == "4E9BB2DE5712E0FDB7270CCE45AF0AFB089C44D4424AA7CF8CA98219EC45A9C1" or
+            hash.sha256(0, filesize) == "C8ACD8E65B46C86D0D01E961358BC6AB9AEC70F90A57829AA15E39ADD536B5C8" or
+            hash.sha256(0, filesize) == "0500C9D0B91E62993447CDCF5F691092AFF409ECA24080CE149F34E48A0445E0" or
+            hash.sha256(0, filesize) == "F7D270CA0F2B4D21830787431F881CD004B2EB102CC3048C6B4D69CB775511C8" or
+
+            false 
+        )
+}
