@@ -1,0 +1,47 @@
+import "hash"
+import "pe"
+
+rule NotPetya_Ransomware
+{
+    meta:
+        description   = "Detects NotPetya ransomware variants"
+        author        = "Jaeysh"
+        malware_family = "Wiper"
+        reference     = "https://www.crowdstrike.com/en-us/blog/petrwrap-ransomware-technical-analysis-triple-threat-file-encryption-mft-encryption-credential-theft/"
+        date          = "2025-02-28"
+        
+
+    strings:
+        $file1 = "perfc.dat"
+        $file2 = "dllhost.dat"
+        $file3 = "perfc"
+        $file4 = "perfc.dll"
+        $ransom_note = "Your files are no longer accessible because they have been encrypted."
+        $url1  = "mischapuk6hyrn72.onion" ascii wide
+        $url2  = "petya3jxfp2f7g3i.onion" ascii wide
+        $url3  = "petya3sen7dyko2n.onion" ascii wide
+        $url4  = "mischa5xyix2mrhd.onion" ascii wide
+        $ip1   = "185.165.29.78"
+        $ip2   = "84.200.16.242"
+        $ip3   = "111.90.139.247"
+        $ip4   = "95.141.115.108"
+
+    condition:
+        uint16(0) == 0x5A4D and 
+        filesize < 500KB and
+        pe.imphash() == "027cc450ef5f8c5f653329641ec1fed91f694e0d229928963b30f6b0d7d3a745" and
+        (1 of ($file*)) and
+        (1 of ($url*)) and
+        (1 of ($ip*)) and
+        $ransom_note and
+        (
+            hash.sha256(0, filesize) == "027cc450ef5f8c5f653329641ec1fed91f694e0d229928963b30f6b0d7d3a745" or
+            hash.sha256(0, filesize) == "64b0b58a2c030c77fdb2b537b2fcc4af432bc55ffb36599a31d418c7c69e94b1" or
+            hash.sha256(0, filesize) == "41f75e5f527a3307b246cadf344d2e07f50508cf75c9c2ef8dc3bae763d18ccf" or
+            hash.md5(0, filesize) == "71b6a493388e7d0b40c83ce903bc6b04" or
+            hash.md5(0, filesize) == "0df7179693755b810403a972f4466afb" or
+            hash.md5(0, filesize) == "42b2ff216d14c2c8387c8eabfb1ab7d0" or
+            hash.md5(0, filesize) == "e285b6ce047015943e685e6638bd837e" or
+            hash.md5(0, filesize) == "e595c02185d8e12be347915865270cca"
+        )
+}
