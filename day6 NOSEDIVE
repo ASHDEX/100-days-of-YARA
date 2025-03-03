@@ -1,0 +1,52 @@
+import "hash"
+
+rule NOSEDIVE
+{
+    meta:
+        description   = "Detection rule for NOSDEDIVE botnet malware and related scripts"
+        type          = "botnet"
+        author        = "Jaeysh"
+        actor         = "Flax Typhoon / Ethereal Panda"
+        reference     = "https://malpedia.caad.fkie.fraunhofer.de/details/elf.nosedive"
+        date          = "2025-02-28"
+
+    strings:
+        // IP addresses
+        $ip1 = "45.92.70.111"
+        $ip2 = "185.207.154.253"
+        $ip3 = "23.236.68.161"
+        $ip4 = "45.92.70.68"
+
+        // Shell script indicators
+        $r1 = "#!/bin/sh" ascii fullword
+        $s1 = "/tmp" ascii
+        $s2 = "/var/tmp" ascii
+        $s3 = "wget http://" ascii
+        $s4 = "rm -rf $0" ascii fullword
+        $s5 = "kill -9 `pidof" ascii
+        $s6 = "sleep 1" ascii fullword
+        $s7 = "while true" ascii fullword
+
+    condition:
+        (
+
+            (1 of ($ip*)) and
+            (
+                hash.sha256(0, filesize) == "a8ca358dcd9c16eaf33d1ca583dd0f95d18ef6ce29595df55e25d09b0fca64ac" or
+                hash.sha256(0, filesize) == "ba2c26e641a34b1683add59e7481a22934d62ca9814e4ee0f1c71766f37dfd6d" or
+                hash.sha256(0, filesize) == "9119babb36c94a47b5034a76fc4d56b927eae9511c86bcc7c02a4afe3fe1c0f8" or
+                hash.sha256(0, filesize) == "fcfac7831cbe120b6cf6792c3527135d84b0b97ed78fe773833f5b5f26d7a0d9" or
+                hash.sha256(0, filesize) == "fe088f3553e09f62cc89f40d931be1b29491607c8f813ab17a7d664443a8e244" or
+                hash.sha256(0, filesize) == "88e0e0be0805fa3fb5ac0a4e29a3c7a206a63b20eaa8661a1a865061601b7f3f" or
+                hash.sha256(0, filesize) == "9591b845695d8fc5d99aaf8571c21d5526ab2777c64c2c6fa5ae5d491e592fc8" or
+                hash.sha256(0, filesize) == "b0355fe61ae232620d8f446ab8487b9b74307ff956f4e5222fc5dded53fea765" or
+                hash.sha256(0, filesize) == "f23b9b9f09b4875f2c2f78cf50222c309cc312b0bdb01c0d3a6056bcea8eaec5"
+            )
+        ) or 
+        (
+            // Shell script detection based on known patterns
+            filesize < 3KB and
+            $r1 at 0 and
+            6 of ($s*)
+        )
+}
