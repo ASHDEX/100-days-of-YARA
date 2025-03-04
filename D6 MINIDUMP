@@ -1,0 +1,29 @@
+rule MinidumpWriteDump
+{
+    meta:
+        description   = "Detects the use of MiniDumpWriteDump for generating memory dumps"
+        type          = "red team/ PT tool"
+        author        = "jaeysh"
+        reference     = "https://www.ired.team/offensive-security/credential-access-and-credential-dumping/dumping-lsass-passwords-without-mimikatz-minidumpwritedump-av-signature-bypass"
+        date          = "2025-02-28"
+
+    strings:
+        
+        $s1 = "DbgHelp.dll" nocase
+        $s2 = "MiniDumpWriteDump" nocase
+        $s3 = "CreateFileW" nocase
+        $s4 = "MiniDumpWithFullMemory" nocase
+        $s5 = ".dmp" nocase
+        $s6 = "GetModuleHandle" nocase
+        $s7 = "LoadLibraryA" nocase
+        $s8 = "LoadLibraryW" nocase
+
+       
+        $hex1 = { 4D 44 4D 50 }  
+        $hex3 = { 68 ?? ?? ?? ?? 68 ?? ?? ?? ?? FF 15 ?? ?? ?? ?? } 
+        $hex2 = { 68 64 62 67 68 65 6C 70 2E 64 6C 6C 00 } 
+
+    condition: 
+        any of ($s1, $s2, $s3, $s4, $s5, $s6, $s7, $s8) or 
+        any of ($hex1, $hex2, $hex3)
+}
