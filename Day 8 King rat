@@ -1,0 +1,61 @@
+import "hash"
+
+rule AsyncRat_Kingrat 
+{
+    meta:
+        description   = "Detects AsyncRAT and its derivatives (e.g., KingRat)"
+        author        = "Jaeysh"
+        malware_family = "RAT"
+       
+
+    strings:
+        $file1 = "xx.vbs"
+        $file2 = "xx.bat"
+        $file3 = "Cotrl.vbs"
+        $file4 = "Cotrl.bat"
+        $file5 = "Cotrl.ps1"
+
+        $process1 = "taskkill"
+        $process2 = "schtasks.exe /create /TN " ascii wide
+        $process3 = "aspnet_compiler.exe" ascii wide
+        $process4 = "powershell.exe Add-MpPreference -ExclusionPath C:\\Users\\Admin\\AppData\\Roaming\\" ascii wide
+        $process5 = "powershell.exe -enc UwB0AGEAcgB0AC0AUwBsAGUAZQBwACAALQBTAGUAYwBvAG4AZABzACAAMQAwAA==" ascii wide
+        $process6 = "powershell.exe -windowstyle hidden -ExecutionPolicy Bypass -NoProfile -Command [Byte[]] $DLL = [System.Convert]::FromBase64String" ascii wide
+
+        $mutex = "AsyncMutex_6SI8OkPnk"
+
+        $header = "AsyncClient"
+
+        $url1  = "hxxp://185.149.146.164/trwsfg.ps1" ascii wide
+        $url2  = "hxxp://147.45.44.131/infopage/" ascii wide
+        $url3  = "hxxps://files-accl.zohoexternal[.]com/public/workdrive-external/download/afgzzad5ae19b67e043c58f6c91e20d8edb2b?x-cli-msg=%7B%22linkId%22%3A%22a7YZIcvjEC5-Xk88i%22%2C%22isFileOwner%22%3Afalse%2C%22version%22%3A%221.0%22%7D" ascii wide
+        $url4  = "hxxp://144.91.79.54/15012025" ascii wide
+        $url5  = "jeazerlog.duckdns.org" ascii wide 
+        $url6  = "hxxp://dvaverif.ru" ascii wide 
+        $url7  = "hxxp://mosacor.co.za/img/image.png" ascii wide 
+
+        $ip1   = "185.149.146.164"
+        $ip2   = "147.45.44.131"
+        $ip3   = "144.91.79.54"
+        $ip4   = "45.74.19.10"
+
+    condition:
+        any of ($file*) and
+        $header and 
+        $mutex and
+        any of ($process*) and   
+        any of ($url*) and
+        any of ($ip*) and  
+        
+        (
+            hash.sha256(0, filesize) == "bc61724d50bff04833ef13ae13445cd43a660acf9d085a9418b6f48201524329" or
+            hash.sha256(0, filesize) == "9b7d16ce9605a6dd615071c7b7a85d464db10ebc1f78da3765fca20de56028c8" or
+            hash.sha256(0, filesize) == "4655dda643f625bf7098656775c2f19f7bc9d3ceea015a720479a43aa0756dbe" or
+            hash.sha256(0, filesize) == "2456f6963ce99206cd2c919fa2108a21482603fd7c2ee5d7e994b8dff921198e" or
+            hash.md5(0, filesize) == "71b6a493388e7d0b40c83ce903bc6b04" or
+            hash.md5(0, filesize) == "0df7179693755b810403a972f4466afb" or
+            hash.md5(0, filesize) == "42b2ff216d14c2c8387c8eabfb1ab7d0" or
+            hash.md5(0, filesize) == "e285b6ce047015943e685e6638bd837e" or
+            hash.md5(0, filesize) == "e595c02185d8e12be347915865270cca"
+        )
+}
