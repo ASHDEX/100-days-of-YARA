@@ -1,0 +1,33 @@
+rule QBIT
+{
+    meta:
+        description   = "Detects qBit Stealer"
+        author        = "Jaeysh"
+        malware_family = "Infostealer"
+        reference     = "https://www.broadcom.com/support/security-center/protection-bulletin/qbit-stealer, https://cyble.com/blog/decoding-qbit-stealers-source-release-and-data-exfiltration-prowess/, https://dmpdump.github.io/posts/NorthKorea_Backdoor_Stealer/, https://www.hendryadrian.com/decoding-qbit-stealers-source-release-and-data-exfiltration-prowess-cyble/"
+
+    strings:
+       
+        $hash1 = "2787246491b1ef657737e217142ca216c876c7178febcfe05f0379b730aae0cc"
+        $hash2 = "874ac477ea85e1a813ed167f326713c26018d9b2d649099148de7f9e7a163b23"
+
+      
+        $s1 = "vcamservice.sh"
+        $s2 = "ChromeUpdateAlert.app"
+        $s3 = "AUTO_CHROME_GATHER"
+        $s4 = "nkbihfbeogaeaoehlefnkodbefgpgknn"  /
+        $s5 = "tar.gz"
+        $s6 = "NtQueryInformationProcess"
+        $s7 = "API Credentials (API):"
+        $s8 = "Path:"
+        $s9 = "StolenFolderName:"
+        $s10 = "MaxFileSizeMB:"
+        $s11 = "SplitSize:"
+        $s12 = "TargetedFileExtensions:"
+        $s13 = ".txt"
+        $s14 = ".pdf"
+        $s15 = "mega.nz"  
+
+    condition:
+        5 of ($s*)  
+}
