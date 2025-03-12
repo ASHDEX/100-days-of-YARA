@@ -1,0 +1,24 @@
+rule Cipher 
+    meta:
+        description   = "The Windows native Cipher tool is a built-in command-line utility that helps manage encryption, securely delete data, and check encryption status in Windows. It is accessible via Command Prompt (cmd.exe) and can also be used within PowerShell"
+        author        = "Jaeysh"
+       
+        reference     = "https://learn.microsoft.com/en-us/troubleshoot/windows-server/certificates-and-public-key-infrastructure-pki/use-cipher-to-overwrite-deleted-data,https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/cipher "
+    strings:
+       
+        
+
+      
+        $s1 = "cipher /?" nocase
+        $s2 = "cipher /E" nocase
+        $s3 = "cipher /C" nocase
+        $s4 = "ipher /W"  nocase
+        $s5 = "cipher /W:C:" nocase
+        $s6 = "cipher /E /S" nocase
+        $s7 = "cipher /D /S:" nocase 
+        $s8 = "Write-Output" nocase 
+         
+
+    condition:
+        any of ($s*)  
+}
