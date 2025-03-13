@@ -1,0 +1,80 @@
+import "hash"
+
+rule LummaStealer {
+    meta:
+        description = "Detects Lumma Stealer based on API calls, file operations, and known hashes."
+        author      = "Jaeysh"
+        reference   = "https://0xtoxin.github.io/malware%20analysis/Lumma-Breakdown/,https://outpost24.com/blog/everything-you-need-to-know-lummac2-stealer/,https://cyber-forensics.blog/2024/05/11/lumma-stealer-analysis/,https://viuleeenz.github.io/posts/2024/02/understanding-peb-and-ldr-structures-using-ida-and-lummastealer/,https://research.openanalysis.net/lumma/obfuscation/cff/ida/2024/04/07/lumma-cff.html,https://ryan-weil.github.io/posts/LUMMA-STEALER/"
+
+    strings:
+        
+        $dll1 = "crypt32.dll" ascii wide nocase
+        $dll2 = "kernel32.dll" ascii wide nocase
+        $dll3 = "advapi32.dll" ascii wide nocase
+        $dll4 = "winhttp.dll"  ascii wide nocase
+        $dll5 = "KernelBase.dll" ascii wide nocase
+        $dll6 = "bcrypt.dll" ascii wide nocase
+
+        
+        $mem1 = "VirtualAlloc"
+        $mem2 = "VirtualProtect"
+        $mem3 = "WriteProcessMemory"
+        $mem4 = "ReadProcessMemory"
+
+        
+        $crypto1 = "CryptEncrypt"
+        $crypto2 = "CryptDecrypt"
+        $crypto3 = "CryptAcquireContext"
+        $crypto4 = "CryptCreateHash"
+        $crypto5 = "CryptDeriveKey"
+
+       
+        $file1 = "CreateFileA"
+        $file2 = "ReadFile"
+        $file3 = "WriteFile"
+        $file4 = "DeleteFileA"
+        $reg1  = "RegOpenKeyExA"
+        $reg2  = "RegQueryValueExA"
+        $reg3  = "RegSetValueExA"
+        $reg4  = "RegCloseKey"
+
+       
+        $anti1 = "IsDebuggerPresent"
+        $anti2 = "OpenProcessToken" ascii wide nocase
+        $anti3 = "AdjustTokenPrivileges" ascii wide nocase
+        $anti4 = "LoadLibraryExW" ascii wide nocase
+        $anti5 = "CopyFileExW" ascii wide nocase
+        $anti6 = "WriteProcessMemory" ascii wide nocase
+        $anti7 = "BCryptGenerateSymmetricKey" ascii wide nocase
+        $anti8 = "SeDebugPrivilege" ascii wide nocase 
+
+        
+        $reg1 = "HKLM\\SOFTWARE\\Microsoft\\IdentityCRL\\ThrottleCache\\" ascii wide
+        $reg2 = "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Component Based Servicing\\TiRunning" ascii wide
+        $reg3 = "HKLM\\SOFTWARE\\Microsoft\\Windows\\Windows Error Reporting\\TermReason\\2700" ascii wide
+        $reg4 = "HKLM\\SOFTWARE\\Microsoft\\Windows\\Windows Error Reporting\\TermReason\\5100" ascii wide
+        $reg5 = "HKLM\\SYSTEM\\CurrentControlSet\\Control\\CI\\Aggregation" ascii wide
+
+       
+        $encoding1 = "LC_COLLATE" ascii wide nocase
+        $encoding2 = "LC_CTYPE" ascii wide nocase
+        $encoding3 = "LCMapStringEx" ascii wide nocase
+
+        
+        $export = "DotNetRuntimeDebugHeade" ascii wide nocase 
+
+    condition:
+        any of ($dll*) or
+        any of ($mem*) or
+        any of ($crypto*) or
+        any of ($file*) or
+        any of ($reg*) or
+        any of ($anti*) or
+        any of ($encoding*) or
+        hash.sha256(0, filesize) == "ae282aecde2e74cadc73ee114e6760959686dc5ee99c608e5e4047766b5137d1" or
+        hash.sha256(0, filesize) == "9f59fa8bfc22e7f8eeb0aabf9ccea130eecd3a825822abd5e8e5347ba0c1402d" or
+        hash.sha256(0, filesize) == "bc3a6e84e41faeb57e7c21aa3b60c2a64777107009727c5b7c0ed8fe658909e5" or
+        hash.sha256(0, filesize) == "2e204c673fb342d5b0472a765ce8576487d83ed25957365f9df744d12ac04893" or
+        hash.sha256(0, filesize) == "96f35b8f39ac3630a9c58f2621bb0cfce873b69c5a1c2a40612130076e07a533" or
+        hash.sha256(0, filesize) == "203cb15f8c2bf45792e72bf75366e3eacf563a7470c66acce935c15f498c1806"
+}
