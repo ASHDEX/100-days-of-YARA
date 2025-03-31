@@ -1,0 +1,41 @@
+import "hash"
+
+rule Prestige {
+    meta:
+        description = "Detects Prestige ransomware."
+        author      = "Jayesh"
+        reference   = "https://www.microsoft.com/en-us/security/blog/2022/10/14/new-prestige-ransomware-impacts-organizations-in-ukraine-and-poland/#:~:text=Prestige%20creates%20C%3A,root%20directory%20of%20each%20drive,https://attack.mitre.org/software/S1058/#:~:text=Prestige%20can%20delete%20the%20backup,vssadmin.exe%20delete%20shadows%20%2Fall%20%2Fquiet%60.%5B1"
+
+    strings:
+        
+        $s12 = "Wow64DisableWow64FsRedirection"
+        $s11 = "Wow64RevertWow64FsRedirection"
+        $s9  = "CreateFileW"
+        $s8  = "WriteFile"
+        $s7  = "CryptAcquireContextW"
+        $s6  = "CryptEncrypt"
+        $s5  = "CryptGenKey"
+        $s4  = "CryptImportKey"
+
+        
+        $s13 = { 30 82 ?? ?? 30 0D 06 09 2A 86 48 86 F7 0D 01 01 01 }
+
+        
+        $s14 = "HKCR\\.enc\\shell\\open\\command" ascii wide
+        $s33 = "c:\\windows\\system32\\wbadmin.exe delete catalog -quiet" ascii wide nocase
+        $s32 = "vssadmin.exe delete shadows /all /quiet" ascii wide nocase
+        $s31 = "c:\\windows\\system32\\net.exe stop MSSQLSERVER" ascii wide nocase
+
+        
+        $s1 = "YOU PERSONAL FILES HAVE BEEN ENCRYPTED" ascii wide nocase
+        $s2 = "To decrypt all the data, you will need to purchase our decryption software. Contact us {}. In the letter, type your ID ={}" ascii nocase wide 
+        $s3 = "Do not try to decrypt your data using third party software, it may cause permanent data loss." ascii nocase wide 
+        $s4a = "Do not modify or rename encrypted files. You will lose them." ascii nocase wide
+
+    condition:
+        (6 of ($s*)) and (
+            hash.sha256(0, filesize) == "5fc44c7342b84f50f24758e39c8848b2f0991e8817ef5465844f5f2ff6085a57" or
+            hash.sha256(0, filesize) == "5dd1ca0d471dee41eb3ea0b6ea117810f228354fc3b7b47400a812573d40d91d" or
+            hash.sha256(0, filesize) == "6cff0bbd62efe99f381e5cc0c4182b0fb7a9a34e4be9ce68ee6b0d0ea3eee39c"
+        )
+}
