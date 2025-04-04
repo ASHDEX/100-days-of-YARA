@@ -1,0 +1,32 @@
+import "hash"
+
+rule Medusa Ransomware
+{
+    meta:
+        description = "Detects Medusa ransomware loader using known strings and hashes"
+        author = "Jayesh"
+        reference1 = "https://malpedia.caad.fkie.fraunhofer.de/library?search=loginsoft,https://www.halcyon.ai/blog/medusa-ransomware-leverages-signed-malicious-driver-to-bypass-epp-edr"
+       
+
+    strings:
+        $s1 = "vssadmin Delete Shadows /all /quiet" nocase wide
+        $s2 = "vssadmin resize shadowstorage" nocase wide
+        $s3 = ".medusa"
+        $s4 = "!!!READ_ME_MEDUSA!!!.txt" nocase wide
+        $s5 = "CryptStringToBinaryA"
+        $s6 = "BCryptImportKeyPair"
+        $s7 = "CryptDecodeObjectEx"
+        $s8 = "CryptImportKey"
+        $s9 = "ASM_Guard"
+        $s10 = { 30 34 0A 55 50 58 21 00 5F 30 78 30 30 31 34 39 33 32 }
+
+    condition:
+        6 of ($s*) and (
+            hash.sha256(0, filesize) == "4d4df87cf8d8551d836f67fbde4337863bac3ff6b5cb324675054ea023b12ab6" or
+            hash.sha256(0, filesize) == "657c0cce98d6e73e53b4001eeea51ed91fdcf3d47a18712b6ba9c66d59677980" or
+            hash.sha256(0, filesize) == "7d68da8aa78929bb467682ddb080e750ed07cd21b1ee7a9f38cf2810eeb9cb95" or 
+            hash.sha256(0, filesize) == "9144a60ac86d4c91f7553768d9bef848acd3bd9fe3e599b7ea2024a8a3115669" or 
+            hash.sha256(0, filesize) == "736de79e0a2d08156bae608b2a3e63336829d59d38d61907642149a566ebd270"
+        )
+}
+
