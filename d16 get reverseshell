@@ -1,0 +1,23 @@
+rule GetReversepowershell 
+{
+    meta:
+        description = "Detects use of GetReversepowershell"
+        author = "Jayesh"
+        references = "https://github.com/gh0x0st/Get-ReverseShell/, https://attack.mitre.org/techniques/T1059/001/, https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/shell-reverse-cheatsheet/#openssl"
+
+    strings:
+        $s1 = "function Get-ReverseShell" nocase wide
+        $s2 = "$IPAddress" nocase wide
+        $s3 = "$Port" nocase wide
+        $s4 = "System.Net.Sockets.TCPClient" nocase wide
+        $s5 = ".GetStream()" nocase wide
+        $s6 = "System.IO.StreamWriter" nocase wide
+        $s7 = "System.IO.StreamReader" nocase wide
+        $s8 = "ConvertTo-Base64" nocase wide
+        $s9 = "cmd.exe" nocase wide
+        $s10 = "IEX" nocase wide
+        $s11 = "Invoke-PSObfuscation" nocase wide
+
+    condition:
+        4 of ($s*)
+}
