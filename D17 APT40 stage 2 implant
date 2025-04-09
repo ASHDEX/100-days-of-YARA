@@ -1,0 +1,35 @@
+import "hash"
+
+rule APT40_Stage2_Implant {
+    meta:
+        description = "Detects APT40 Stage 2 implant"
+        author = "Jayesh"
+        reference = "https://www.cisa.gov/news-events/cybersecurity-advisories/aa24-190a, https://www.elastic.co/security-labs/advanced-techniques-used-in-malaysian-focused-apt-campaign, https://attack.mitre.org/groups/G0065/, https://malpedia.caad.fkie.fraunhofer.de/actor/apt40"
+
+    strings:
+        $s1 = "/list_direction" fullword wide
+        $s2 = "/post_document" fullword wide
+        $s3 = "/postlogin" fullword wide
+        $s4 = "Download Read Path Failed %s" fullword ascii
+        $s5 = "Open Pipe Failed %s" fullword ascii
+        $s6 = "Open Remote File %s Failed For: %s" fullword ascii
+        $s7 = "\\cmd.exe" fullword wide
+
+    condition:
+        all of ($s*) and (
+            hash.sha256(0, filesize) == "7795936ed1bdb7a5756c1ff821b2dc8739966abb00e3e0ae114ee728bf1cf1a4" or
+            hash.sha256(0, filesize) == "dedb022d3c43db6cddd87f250db4758bd88c967f98302d97879d9fc4fadd8a2" or
+            hash.sha256(0, filesize) == "5a1c689cddb036ca589f6f2e53d323109b94ce062a09fb5b7c5a2efedd7306bc" or 
+            hash.sha256(0, filesize) == "cb981d04f21a97fdb46b101a882a3490e245760489f4122deb4a0ac951a8eaee" or
+            hash.sha256(0, filesize) == "3d37a977f36e8448b087f8e114fe2a1db175372d4b84902887808a6fb0c8028f" or 
+            hash.sha256(0, filesize) == "e8a919e0e02fecfe538a8698250ac3eaba969e2af2cc9d96fc86675a658e201e" or
+            hash.sha256(0, filesize) == "0b9447cb00ae657365eb2b771f4f2c505e44ca96a0a062d54f3b8544215fc082" or 
+            hash.sha256(0, filesize) == "2f204f3b3abc97efc74b6fa016a874f9d4addb8ac70857267cc8e4feb9dbba26" or
+            hash.sha256(0, filesize) == "b4296309da48665121899c62ed8fb10f4f8d22e44fd70d2f9ac8902896db1" or
+            hash.md5(0, filesize) == "26a5a7e71a601be991073c78d513dee3" or 
+            hash.md5(0, filesize) == "87c88f06a7464db2534bc78ec2b915de" or 
+            hash.md5(0, filesize) == "6a9bc68c9bc5cefaf1880ae6ffb1d0ca" or 
+            hash.md5(0, filesize) == "64454645a9a21510226ab29e01e76d39" or 
+            hash.md5(0, filesize) == "e2175f91ce3da2e8d46b0639e941e13f"
+        )
+}
