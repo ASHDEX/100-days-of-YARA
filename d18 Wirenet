@@ -1,0 +1,31 @@
+import "hash"
+
+rule Winnet Dropper  {
+    meta:
+        description = "Wirenet Dropper and others
+        "
+        author = "Jayesh"
+        reference = "https://kausrini.github.io/2021-07-24-malware-analysis-dropper,https://malpedia.caad.fkie.fraunhofer.de/details/osx.wirenet"
+
+    strings:
+        $s1 = "reqyn.exe" nocase wide
+        $s2 = "quavb.exe" nocase wide
+        $s3 = "golfinfo.ini" nocase wide
+        $s4 = "Download Read Path Failed %s" nocase ascii
+        $s5 = "Open Pipe Failed %s" nocase ascii
+        $s6 = "Open Remote File %s Failed For: %s" nocase ascii
+        $s7 = "H:\\PMS\\_AUpdate\\Update\\bin\\Release\\GolfUpdate87.pdb" nocase ascii
+    condition:
+        any 2 of ($s*) and (
+            hash.sha256(0, filesize) == "7795936ed1bdb7a5756c1ff821b2dc8739966abb00e3e0ae114ee728bf1cf1a4" or
+            hash.sha256(0, filesize) == "dedb022d3c43db6cddd87f250db4758bd88c967f98302d97879d9fc4fadd8a2" or
+            hash.sha256(0, filesize) == "5a1c689cddb036ca589f6f2e53d323109b94ce062a09fb5b7c5a2efedd7306bc" or 
+            hash.sha256(0, filesize) == "cb981d04f21a97fdb46b101a882a3490e245760489f4122deb4a0ac951a8eaee" or
+            hash.sha256(0, filesize) == "3d37a977f36e8448b087f8e114fe2a1db175372d4b84902887808a6fb0c8028f" or 
+         
+            hash.md5(0, filesize) == "26a5a7e71a601be991073c78d513dee3" or 
+            hash.md5(0, filesize) == "87c88f06a7464db2534bc78ec2b915de" or 
+            hash.md5(0, filesize) == "6a9bc68c9bc5cefaf1880ae6ffb1d0ca" or 
+           
+        )
+}
