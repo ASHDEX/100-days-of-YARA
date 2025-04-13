@@ -1,0 +1,36 @@
+rule BruteRatel_C4
+{
+    meta:
+        description = "Detects Brute Ratel C4 "
+        author = "Jayesh"
+        reference = "https://bazaar.abuse.ch/browse/yara/BruteRatel/, https://malpedia.caad.fkie.fraunhofer.de/details/win.brute_ratel_c4"
+
+    strings:
+       
+        $s1 = "Brute Ratel C4" nocase wide
+        $s2 = "https://api.bruteratel.com" nocase wide
+        $s3 = "implant configuration" nocase wide
+        $s4 = "Access Key" nocase ascii
+        $s5 = "\\\\.\\pipe\\postex_" nocase ascii wide
+        $s6 = "/jquery-3.3.1.min.js" nocase ascii
+        $s7 = "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run" nocase ascii
+
+       
+        $api1 = "AdjustTokenPrivileges"
+        $api2 = "OpenProcessToken"
+        $api3 = "LookupPrivilegeValueW"
+        $api4 = "ImpersonateLoggedOnUser"
+        $api5 = "RevertToSelf"
+        $api6 = "VirtualAllocEx"
+        $api7 = "CreateRemoteThread"
+        $api8 = "NtFlushInstructionCache"
+        $api9 = "NtUnmapViewOfSection"
+        $api10 = "QueueUserAPC"
+        $api11 = "NtQueryInformationProcess"
+        $api12 = "NtQuerySystemInformation"
+        $api13 = "CreateMutexA"
+        $api14 = "CreateMutexW"
+
+    condition:
+        any of ($s*) and any of ($api*)
+}
