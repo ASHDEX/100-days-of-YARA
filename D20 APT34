@@ -1,0 +1,30 @@
+rule APT34_POWRUNER_BONDUPDATER
+{
+    meta:
+        description = "Detects APT34 POWRUNER BONDUPDATER activities"
+        author = "Jayesh"
+        reference = "https://cloud.google.com/blog/topics/threat-intelligence/targeted-attack-in-middle-east-by-apt34/"
+
+    strings:
+        
+        $ss1 = "hUpdateCheckers.base" nocase wide
+        $ss2 = "dUpdateCheckers.base" nocase wide
+        $ss3 = "GoogleUpdateschecker.vbs" nocase wide
+        $ss4 = "cUpdateCheckers.bat" nocase ascii
+        $ss5 = "WScript.Shell" nocase ascii
+
+        
+        $s5 = "C:\\ProgramData\\Windows\\Microsoft\\java\\" nocase ascii wide
+        $s8 = "cmd.exe /C certutil -f  -decode C:\\ProgramData\\" nocase ascii
+        $s9 = "cmd.exe /C wscript /b" nocase ascii
+        $s10 = "C:/programdata/dupdatechecker.exe" nocase ascii
+
+        
+        $s7 = "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run" nocase ascii
+
+        
+        $web = "mumbai-m.site" nocase ascii wide
+
+    condition:
+        (any of ($ss*) and any of ($s*) and $web)
+}
