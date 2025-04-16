@@ -1,0 +1,64 @@
+rule BlackBasta_Activities
+{
+    meta:
+        description = "Detects Black Basta Activities"
+        author = "Jayesh"
+        reference = "https://intel471.com/blog/an-in-depth-look-at-black-bastas-ttps, https://attack.mitre.org/software/S1070/, https://cyble.com/blog/black-basta-ransomware/, https://research.checkpoint.com/2022/black-basta-and-the-unnoticed-delivery/"
+
+    strings:
+        
+        $dll1 = "bcrypt.dll" nocase ascii wide
+        $dll2 = "CRYPT32.dll" nocase ascii wide
+        $dll3 = "urlmon.dll" nocase ascii wide
+        $dll4 = "networkexplorer.dll" nocase ascii wide
+        $dll5 = "NlsData0000.dll" nocase ascii wide
+
+        
+        $setup1 = "OneDriveStandaloneUpdater.exe" nocase ascii wide
+        $setup2 = "advanced_ip_scanner.exe" nocase ascii wide
+        $setup3 = "angry_ip_scanner.exe" nocase ascii wide
+        $setup4 = "netscan.exe" nocase ascii wide
+
+        
+        $email1 = "admin_85@perronesrl102.onmicrosoft.com"
+        $email2 = "admin_54@craftsbylucienne.onmicrosoft.com"
+        $email3 = "technicalsupport@bevenada.com"
+        $email4 = "admin_35@mbnnifty774.onmicrosoft.com"
+
+        
+        $ransom1 = "Your data are stolen and encrypted. The data will be published on TOR website if you do not pay the ransom
+                    You can contact us and decrypt one file for free on this TOR site" nocase ascii wide
+        $ransom2 = "Your company id for log in" nocase ascii wide
+
+        
+        $cmd1 = "nltest /domain_trusts /all_trusts" nocase ascii
+        $cmd2 = "net localgroup Administrators" nocase ascii
+        $cmd3 = "net group \"Domain Admin\"" nocase ascii
+        $cmd4 = /C:\\Users\\[^\\]+\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Login Data/i
+        $cmd5 = /C:\\Users\\[^\\]+\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\Login Data/i
+        $cmd6 = "MAIN_DIR=%WINDIR%\\System32\\LogFiles\\OneDriveUpdate" nocase ascii
+        $cmd7 = "schtasks /Delete /TN" nocase ascii wide
+        $cmd8 = "C:\\Windows\\SysNative\\vssadmin.exe delete shadows /all /quiet" nocase ascii
+        $cmd9 = "C:\\Windows\\System32\\vssadmin.exe delete shadows /all /quiet" nocase ascii
+
+        
+        $mutex = "dsajdhas.0"
+
+        
+        $api1 = "SystemParametersInfoW" nocase ascii
+        $api2 = "GetSystemMetrics" nocase ascii
+        $api3 = "ShellExecuteA" nocase ascii
+
+        
+        $reg1 = "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\SafeBoot\\Network"
+
+    condition:
+        all of ($dll*) and
+        any of ($setup*) and
+        any of ($email*) and
+        any of ($cmd*) and
+        any of ($api*) and
+        any of ($ransom*) and
+        $mutex and
+        $reg1
+}
