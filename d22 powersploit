@@ -1,0 +1,43 @@
+import "hash"
+
+rule Powersploit
+{
+    meta:
+        description = "Detects PowerSploit Modules"
+        author = "Jayesh"
+        reference = "https://github.com/PowerShellMafia/PowerSploit, https://powersploit.readthedocs.io/en/latest/Recon/Invoke-Kerberoast/"
+
+    strings:
+        $cmd1 = "Invoke-DllInjection" nocase ascii
+        $cmd2 = "Invoke-ReflectivePEInjection" nocase ascii
+        $cmd3 = "Invoke-Shellcode" nocase ascii
+        $cmd4 = "Invoke-WmiCommand" nocase ascii
+        $cmd5 = "Out-EncodedCommand" nocase ascii
+        $cmd6 = "Invoke-Kerberoast" nocase ascii
+        $cmd7 = "Invoke-Mimikatz" nocase ascii
+        $cmd8 = "Out-EncryptedScript" nocase ascii
+        $cmd9 = "Remove-Comment" nocase ascii
+        $cmd10 = "New-UserPersistenceOption" nocase ascii
+        $cmd11 = "New-ElevatedPersistenceOption" nocase ascii
+        $cmd12 = "Add-Persistence" nocase ascii
+        $cmd13 = "Find-AVSignature" nocase ascii
+        $cmd14 = "Invoke-TokenManipulation" nocase ascii
+        $cmd15 = "Invoke-CredentialInjection" nocase ascii
+        $cmd16 = "Invoke-NinjaCopy" nocase ascii
+        $cmd17 = "Get-Keystrokes" nocase ascii
+        $cmd18 = "Get-GPPPassword" nocase ascii
+        $cmd19 = "Get-GPPAutologon" nocase ascii
+        $cmd20 = "Get-TimedScreenshot" nocase ascii
+        $cmd21 = "New-VolumeShadowCopy" nocase ascii
+        $cmd22 = "Out-Minidump" nocase ascii
+
+        $reg1 = "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run" nocase ascii
+
+    condition:
+        1 of ($cmd*) and $reg1
+        and (
+            hash.sha256(0, filesize) == "4f4fa97d06e2e843755be869f73342be36e1ebeb280bb45724962ce4b6710297" or
+            hash.sha256(0, filesize) == "75ef60ea0265d2629c920a6a1c0d1d91d3c0dea86445c7d67ebb9b30e35a2a9f" or
+            hash.sha256(0, filesize) == "ae0dd5df608f581bbc075a88c48eedeb7ac566ff750e0a1baa7718379941db86"
+        )
+}
