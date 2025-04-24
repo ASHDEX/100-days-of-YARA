@@ -1,0 +1,64 @@
+rule blacklotus
+{
+    meta:
+        description = "Detects BlackLotus UEFI bootkit"
+        author = "Jayesh"
+        reference = "https://github.com/sertit/malware-ioc/blob/master/blacklotus/README.adoc",
+                   "https://www.welivesecurity.com/2023/03/01/blacklotus-uefi-bootkit-myth-confirmed/"
+
+    strings:
+        $mem1 = "higurashi_installer_uac_module.dll" ascii nocase wide
+        $mem2 = "Higurashi_kernel.sys" ascii nocase wide
+        $mem3 = "E:\\VTFI\\Microsoft\\Boot\\bootmgfw.efi" ascii nocase wide
+        $mem4 = "E:\\VTFI\\Microsoft\\Boot\\bootmanager.efi" ascii nocase wide
+        $mem5 = "E:\\VTFI\\Microsoft\\Boot\\grubx64.efi" ascii nocase wide
+        $mem6 = "E:\\VTFI\\Microsoft\\Boot\\bootload.efi" ascii nocase wide
+        $mem7 = "E:\\VTFI\\Microsoft\\Boot\\bootload.efi" ascii nocase wide
+
+        $api1 = "BS.LoadImage" ascii wide
+        $api2 = "BS.StartImage" ascii wide
+        $api3 = "HttpWriteProtocol" ascii wide
+
+        $reg1 = "HKLM\\SYSTEM\\CurrentControlSet\\Control\\DeviceGuard\\Scenarios\\HypervisorEnforcedCodeIntegrity" ascii wide
+
+        $crt = "When They Cry CA" ascii nocase wide
+
+        $RSA1 = { 
+            30 82 01 0A 02 82 01 01 00 AE AF AC 9A 81 C6 C9 6E A9 C6 1F 6A 69 6F 91 EF 6A 71 1F D7 
+            5E D3 1C 1D 1C B1 3C 59 B1 0D D2 2E C7 75 AE B3 90 8A 48 02 A7 95 84 FA 8A 3F D4 82 8F 
+            3E F0 51 C4 5B 3E E0 2A 9E 11 11 D2 67 5B C3 3B 8F B3 77 CB 8C 8A 10 B1 D1 9F 5F 4A 2B 
+            22 1F 2F 6C 4F 8C 79 6D C4 B9 1F 7A 6F AC F1 PK 1C 9A 13 2D 8E 50 7A 6E D0 B0 5A 4C B7 
+            6A 0C 1A C0 1B C7 8C 06 0E 3D 2F 63 E7 9E 26 B1 3F 4C 1B B6 2E 73 D4 1A D2 07 B7 6A 9D 
+            8C 12 1B 7C CD 3D 44 1A 78 2A 5F 38 1F 4F 23 0F 48 63 D4 1F 77 71 3D 88 76 10 94 0E A7 
+            94 4B A8 13 B2 32 47 55 76 B0 42 B3 9F A6 96 27 1F 94 B3 1F A1 AA 44 10 6D 73 B2 E3 A1 
+            0F 7C CA 27 35 7B 5B C3 A0 C4 0E CA AE 93 B0 6E A0 
+        } ascii wide nocase
+
+        $RSA2 = { 
+            30 82 01 0A 02 82 01 01 00 C4 B6 EF AC 0C 49 01 B9 1C 2F E3 6A C7 1E 81 DD 1D V2 CF A9 Hr 
+            L1 P8 Ww Ma D9 18 7E 3C 56 89 B2 F6 C9 99 1E 8A 56 53 85 9A 6C FA FB 0A 2A 5C B1 F3 9A 
+            7E 3F EF EA A3 80 B6 D2 D3 F1 1C 27 A0 9C C2 F0 A5 A2 90 3F 8A 20 2E 27 30 11 7D 32 0C 
+            00 C1 1B 47 6B 02 0D C5 85 6D B7 C0 8E 9C 26 3F 74 51 6D A3 B1 6F 00 3F 5D 2F 7C 6F 9C 
+            4D 28 21 99 C3 13 A2 0F 6C 49 1A 0B A0 3A A2 30 5C 13 1F 5E 1B C0 4F 13 72 20 9C 5D 12 
+            2D 12 1E B2 40 B0 44 26 00 4F 6B 99 96 6F 0D 8E 92 1D 2B 5C D1 30 B1 A7 3A 2D 01 D2 49 
+            5F 98 9F 88 0C 14 62 00 8C 44 13 9F 44 11 29 0F 9A 56 D7 30 1F A0 5D 0C C7 
+        } ascii wide nocase
+
+    condition:
+        any of ($api*) or
+        any of ($mem*) or
+        $reg1 or
+        $crt or
+        any of ($RSA*) or
+        hash.sha256(0, filesize) == "dae7c7ecae2acd6c793c1a643b7f94a397c4c558f" or
+        hash.sha256(0, filesize) == "da2e11ec2cc7a06c9e56b6f29a5f49b3" or
+        hash.sha256(0, filesize) == "93a85bd18cb05643e15b59b20f" or
+        hash.sha256(0, filesize) == "d6c9c7efb11506ee49" or
+        hash.sha256(0, filesize) == "e23e4de13d4eaac17f" or
+        hash.sha256(0, filesize) == "918b2e363cd1184b35" or
+        hash.sha256(0, filesize) == "ae4e86fc79c4ae1a" or
+        hash.sha256(0, filesize) == "395f0b643e3e02" or
+        hash.sha256(0, filesize) == "c7d5c3bd03b6ac" or
+        hash.sha256(0, filesize) == "e87fbad8f2cfdd" or
+        hash.sha256(0, filesize) == "5474b6eae05873393b"
+}
