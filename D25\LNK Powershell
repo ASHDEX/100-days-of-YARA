@@ -1,0 +1,26 @@
+rule LNKHiddenPowerShell
+    meta:
+        description = "Detects LNK files  PowerShell commands"
+        author = "Jayesh "
+
+        reference = "https://attack.mitre.org/techniques/T1203/"
+
+    strings:
+        $header = { 4C 00 00 00 01 14 02 00 }
+        $ps1 = "powershell"
+        $ps2 = "-enc " ascii nocase
+        $ps3 = "-EncodedCommand" ascii nocase
+        $ps4 = "iex(" ascii nocase
+        $ps5 = "invoke-expression" ascii nocase
+        $ps6 = "-nop -w hidden" ascii nocase
+        $ps7 = "-windowstyle hidden" ascii nocase
+        $ps8 = "FromBase64String" ascii nocase
+        $ps9 = "System.Management.Automation" ascii nocase
+
+    condition:
+        $header at 0 and
+        filesize < 5MB and
+        (
+            $ps1 and ($ps2 or $ps3 or $ps4 or $ps5 or $ps6 or $ps7 or $ps8 or $ps9)
+        )
+}
