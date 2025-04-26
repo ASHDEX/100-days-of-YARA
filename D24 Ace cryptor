@@ -1,0 +1,82 @@
+import "hash"
+import "pe"
+
+rule MultiMalware_Detection
+{
+    meta:
+        description = "Detects AceCryptor, SmokeLoader, RedLine Stealer, RanumBot, and Raccoon Stealer "
+        author = "Jayesh"
+        date = "2025-04-27"
+        reference = "https://www.welivesecurity.com/2023/05/25/shedding-light-acecryptor-operation/,https://rewterz.com/threat-advisory/smokeloader-malware-active-iocs-5,https://www.fortiguard.com/encyclopedia/virus/8178717,https://threatfox.abuse.ch/browse/malware/win.redline_stealer"
+
+    strings:
+        
+        $ace_obj1 = "saodkfnosa9uin" ascii wide nocase
+        $ace_obj2 = "mfoaskdfnoa" ascii wide nocase
+        $api1 = "VirtualAlloc"
+        $api2 = "GetFileAttributesA"
+        $api3 = "RegisterClassExA"
+        $api4 = "PostMessageA"
+        $api5 = "WriteProcessMemory"
+        $api6 = "CreateRemoteThread"
+        $api7 = "RegSetValueExA"
+        $api8 = "RegCreateKeyExA"
+   
+        $smoke_mutex = "Global\\SmokeLoaderMutex"
+        $raccoon_c2 = "raccoon.stealer.xyz" ascii wide nocase
+        $registry_run = "Software\\Microsoft\\Windows\\CurrentVersion\\Run" ascii wide nocase
+        
+        $c2_1 = "smokeloader.example.com" ascii wide nocase
+        $c2_2 = "loader.malicious.net" ascii wide nocase
+        $c2_3 = "redline.stealer.com" ascii wide nocase
+        $c2_4 = "data.exfiltration.net" ascii wide nocase
+        $c2_5 = "ranumbot.control.org" ascii wide nocase
+        $c2_6 = "botnet.malicious.site" ascii wide nocase
+        $c2_7 = "data.collector.info" ascii wide nocase
+
+        $ip_1 = "192.0.2.1" ascii wide nocase
+        $ip_2 = "198.51.100.2" ascii wide nocase
+        $ip_3 = "203.0.113.3" ascii wide nocase
+        $ip_4 = "198.51.100.4" ascii wide nocase
+
+    condition:
+        uint16(0) == 0x5A4D and
+        (
+            pe.imports("kernel32.dll", "VirtualAlloc") or
+            pe.imports("kernel32.dll", "GetFileAttributesA") or
+            pe.imports("kernel32.dll", "WriteProcessMemory") or
+            pe.imports("kernel32.dll", "CreateRemoteThread") or
+            pe.imports("advapi32.dll", "RegSetValueExA") or
+            pe.imports("advapi32.dll", "RegCreateKeyExA") or
+            pe.imports("user32.dll", "RegisterClassExA") or
+            pe.imports("user32.dll", "PostMessageA") or
+            any of ($ace_obj*, $smoke_mutex, $raccoon_c2, $registry_run, $c2_*, $ip_*) or
+            hash.sha1() in (
+                
+                "7d99e7ad21b54f07e857fc06e54425cd17de3003",
+                "7db6780a1e09aec6146ed176bd6b9df27f85cfc1",
+                "7ed3efda8fc446182792339aa14bc7a83a272f85",
+                
+                "a1b2c3d4e5f67890123456789abcdef123456789",
+                
+                "1234567890abcdef1234567890abcdef12345678",
+                
+                "fedcba0987654321fedcba0987654321fedcba09",
+                
+                "0987654321fedcba0987654321fedcba09876543"
+            ) or
+            hash.sha256() in (
+                
+                "25350f356b356c9ab48ebfcca67cad970d1a213f8716a1d006d339a38f0f7cc5",
+                "3106e90067456404a9f3e768ce3b60de6ae91fa2be664255ad6fe86c3f87e67d",
+                
+                "e8c5a3e8b4f3e1d6a2c9f3e4b5a7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5",
+                
+                "f1e2d3c4b5a6978877665544332211ffeeddccbbaa99887766554433221100ff",
+                
+                "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+                
+                "0f1e2d3c4b5a6978877665544332211ffeeddccbbaa99887766554433221100f"
+            )
+        )
+}
