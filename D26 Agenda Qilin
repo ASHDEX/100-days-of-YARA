@@ -1,0 +1,59 @@
+import "hash"
+
+rule AgendaRansomware
+{
+    meta:
+        description = "Detects Agenda / Qilin Ransomware"
+        author = "Jayesh Choudhary"
+        date = "2025-04-27"
+        reference = "https://www.trendmicro.com/en_us/research/22/l/agenda-ransomware-uses-rust-to-target-more-vital-industries.htm, https://sec-consult.com/blog/detail/unveiling-qilin-agenda-ransomware-a-deep-dive-into-modern-cyber-threats, https://securityboulevard.com/2023/07/qilin-ransomware-report, https://www.group-ib.com/blog/qilin-ransomware/"
+
+    strings:
+        $extension = ".MmXReVIxLV" ascii nocase wide 
+
+        $file0 = "update.exe" ascii
+        $file1 = "PCHunter64.exe" ascii
+        $file2 = "PowerTool64.exe" ascii
+        $file3 = "FileZilla_3.66.5_win64-setup.exe" ascii
+        $file4 = "FileZilla_3.64.0_win64-setup.exe" ascii
+        $file5 = "ipscan.exe" ascii
+        $file6 = "netscan_portable.exe" ascii
+        $file7 = "WinPcap_4_1_3.exe" ascii
+
+        $cmd = "--password AgendaPass" ascii nocase wide
+
+        $ps1 = "powershell $logs = Get-WinEvent -ListLog * | Where-Object {$_.RecordCount} | Select-Object -ExpandProperty LogName ; ForEach ( $l in $logs | Sort | Get-Unique ) {[System.Diagnostics.Eventing.Reader.EventLogSession]::GlobalSession.ClearLog($l)}" ascii
+        $ps2 = "import-module .\\ShareFinder.ps1" ascii
+        $ps3 = "Invoke-ShareFinder -CheckShareAccess -Verbose" ascii
+
+        $path1 = "C:\\PerfLogs\\update.exe" ascii
+        $path2 = "C:\\PerfLogs" ascii
+
+        $ransom1 = "Your network/system was encrypted" ascii nocase wide
+        $ransom2 = "Encrypted files have new extension" ascii nocase wide
+        $ransom3 = "We have downloaded compromising and sensitive data from your system/network If you refuse to communicate with us and we do not come to an agreement your data will be published" ascii nocase wide
+
+        $ransomfile = /[a-zA-Z0-9]+-RECOVER-README\.txt/
+
+    condition:
+        (
+            hash.sha256(0, filesize) == "e90bdaaf5f9ca900133b699f18e4062562148169b29cb4eb37a0577388c22527" or
+            hash.sha256(0, filesize) == "55e070a86b3ef2488d0e58f945f432aca494bfe65c9c4363d739649225efbbd1" or
+            hash.sha256(0, filesize) == "37546b811e369547c8bd631fa4399730d3bdaff635e744d83632b74f44f56cf6" or
+            hash.sha256(0, filesize) == "76f860a0e238231c2ac262901ce447e83d840e16fca52018293c6cf611a6807e" or
+            hash.sha256(0, filesize) == "fd7cbadcfca84b38380cf57898d0de2adcdfb9c3d64d17f886e8c5903e416039"
+        )
+        or
+        (
+            filesize < 5MB and
+            $extension and
+            any of ($file*) and
+            $cmd and
+            1 of ($ps*) and
+            1 of ($path*) and
+            (
+                1 of ($ransom*) or
+                $ransomfile
+            )
+        )
+}
