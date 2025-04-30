@@ -6,7 +6,7 @@ rule Conti
         description = "Detects Conti Ransomware"
         author = "Jayesh Choudhary"
         date = "2025-04-29"
-        reference = "https://socradar.io/dark-web-profile-3am-ransomware/, https://www.cyberdefenseinsight.com/2023/09/new-ransomware-strain-3am-bypasses.html, https://www.avertium.com/resources/threat-reports/new-ransomware-strains-cactus-and-3am"
+        
 
     strings:
         
