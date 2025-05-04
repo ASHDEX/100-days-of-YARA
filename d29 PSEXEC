@@ -1,0 +1,18 @@
+rule PsExec
+{
+    meta:
+        description = "Detects PsExec "
+        author = "Jayesh Choudhary"
+        reference = "https://docs.microsoft.com/en-us/sysinternals/downloads/psexec"
+
+    strings:
+        $str1 = "PsExec service" ascii wide
+        $str2 = "PSEXESVC" ascii wide
+        $str3 = "PsExec v" ascii wide
+        $str4 = "psexecsvc" ascii nocase
+        $exe1 = "psexec.exe" ascii nocase
+        $exe2 = "psexec64.exe" ascii nocase
+
+    condition:
+        (uint16(0) == 0x5A4D) and any of them
+}
