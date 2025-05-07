@@ -1,0 +1,34 @@
+rule SharpHound/Blood
+{
+    meta:
+        description = "Detects Sharp/BloodHound"
+        author = "Jayesh Choudhary"
+        date = "2025-05-07"
+        
+        reference = "https://github.com/BloodHoundAD/SharpHound,https://posts.specterops.io/introducing-bloodhound-4-1-the-three-headed-hound-be3c4a808146,https://github.com/SpecterOps/BloodHound-Legacy,https://bloodhound.specterops.io/resources/glossary/overview,https://github.com/SpecterOps/SharpHound/releases"
+        
+
+    strings:
+        
+        $s1 = "BloodHound" nocase
+        $s2 = "SharpHoundLog" ascii wide
+        $s3 = "DoPingSweep" ascii
+        $s4 = "StealthCollection" ascii
+        $s5 = "PrimaryGroupToken" ascii
+        $s6 = "ACLCollectionMethods" ascii
+        $s7 = "\\\\%s\\SYSVOL" ascii
+        $s8 = "\\\\%s\\NETLOGON" ascii
+
+       
+        $ps1 = "Invoke-BloodHound" nocase
+        $ps2 = "-CollectionMethod" nocase
+        $ps3 = "-LDAPFilter" nocase
+        $ps4 = "System.Net.Dns]::GetHostEntry" nocase
+        $ps5 = "System.DirectoryServices" nocase
+
+        
+        $bas64 = "SW52b2tlLUJsb29kSG91bmQ" 
+
+    condition:
+        3 of ($s*) or (3 of ($ps*)) or $bas64
+}
