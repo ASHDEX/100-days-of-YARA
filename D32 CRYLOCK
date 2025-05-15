@@ -1,0 +1,45 @@
+
+
+rule crylock
+{
+    meta:
+        description = "Detects CryLock "
+        author = "Jayesh Choudhary"
+        date = "2025-05-07"
+
+    strings:
+        
+        $ransom1 = "how_to_decrypt.hta" ascii nocase
+        $ransom2 = "Price is raised! Your files have been encrypted... Price is raised!Your files will be lost after" ascii nocase 
+        
+        
+        $file1 = "svcajx.exe" ascii nocase
+        $file2 = "svcbba.exe" ascii nocase
+        $file3 = "svccbf.exe" ascii nocase
+        $file4 = "svckaa.exe" ascii nocase
+        $file5 = "svciai.exe" ascii nocase
+        $file6 = "svceda.exe" ascii nocase
+
+        
+        $mail1 = "reddragon3335799@protonmail.ch" ascii nocase
+        $mail2 = "reddragon3335799@tutanota.com" ascii nocase
+        $mail3 = "flydragon@mailfence.com" ascii nocase
+        $mail4 = "grand@horsefucker.org" ascii nocase
+        $mail5 = "horsefucker@tuta.io" ascii nocase
+
+       
+        $cmd1 = "vssadmin delete shadows /all /quiet" ascii nocase
+        $cmd2 = "wbadmin DELETE SYSTEMSTATEBACKUP -keepVersions:0" ascii nocase
+        $cmd3 = "wbadmin DELETE BACKUP -keepVersions:0" ascii nocase
+        $cmd4 = "wmic SHADOWCOPY DELETE" ascii nocase
+        $cmd5 = "bcdedit /set {default} recoveryenabled No" ascii nocase
+        $cmd6 = "bcdedit /set {default} bootstatuspolicy ignoreallfailures" ascii nocase
+
+    condition:
+        (
+            2 of ($ransom*) or
+            3 of ($file*) or
+            2 of ($mail*) or
+            2 of ($cmd*)
+        )
+}
