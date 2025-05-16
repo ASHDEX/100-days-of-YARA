@@ -1,0 +1,76 @@
+import "hash"
+
+rule lockbit
+{
+    meta:
+        description = "Detects LockBit r"
+        author = "Jayesh Choudhary"
+        date = "2025-05-07"
+
+    strings:
+        
+    
+       
+        $safe1 = "bcdedit /set {current} safeboot network" ascii nocase
+        $safe2 = "bootcfg /raw /a /safeboot:network /id 1" ascii nocase
+        $safe3 = "bcdedit /deletevalue {current} safeboot" ascii nocase
+        $safe4 = "bootcfg /raw /fastdetect /id 1" ascii nocase
+
+        
+        $reg1  = "HKCU\\Control Panel\\Desktop\\WallPaper" ascii nocase
+        $reg2  = "SOFTWARE\\Policies\\Microsoft\\Windows\\OOBE" ascii nocase
+        $reg3  = "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon" ascii nocase
+        $reg4  = "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\" ascii nocase
+        $reg5  = "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WINEVT\\Channels\\*\\ChannelAccess" ascii nocase
+        $reg6  = "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\System\\GroupPolicyRefreshTimeDC" ascii nocase
+        $reg7  = "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\System\\GroupPolicyRefreshTimeOffsetDC" ascii nocase
+        $reg8  = "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\System\\GroupPolicyRefreshTime" ascii nocase
+        $reg9  = "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\System\\GroupPolicyRefreshTimeOffset" ascii nocase
+        $reg10 = "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\System\\EnableSmartScreen" ascii nocase
+        $reg11 = "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\System\\del.ShellSmartScreenLevel" ascii nocase
+        $reg12 = "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\DisableAntiSpyware" ascii nocase
+        $reg13 = "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\DisableRoutinelyTakingAction" ascii nocase
+        $reg14 = "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Real-Time Protection\\DisableRealtimeMonitoring" ascii nocase
+        $reg15 = "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Real-Time Protection\\DisableBehaviorMonitoring" ascii nocase
+        $reg16 = "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Spynet\\SubmitSamplesConsent" ascii nocase
+        $reg17 = "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Spynet\\SpynetReporting" ascii nocase
+        $reg18 = "HKLM\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\DomainProfile\\EnableFirewall" ascii nocase
+        $reg19 = "HKLM\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\StandardProfile\\EnableFirewall" ascii nocase
+
+        
+        $cmd1 = "del" ascii nocase
+        $cmd2 = "gdel" ascii nocase
+        $cmd3 = "gspd" ascii nocase
+        $cmd4 = "pass" ascii nocase
+        $cmd5 = "path" ascii nocase
+        $cmd6 = "psex" ascii nocase
+        $cmd7 = "wall" ascii nocase
+        $cmd8 = "safe" ascii nocase
+
+        
+        $note = "LockBit 3.0 the world's fastest and most stable ransomware from 2019. Your data is stolen and encrypted. If you don't pay the ransom, the data will be published on our TOR darknet sites. Keep in mind that once your data appears on our leak site, it could be bought by your competitors at any second, so don't hesitate for a long time. The sooner you pay the ransom, the sooner your company will be safe." ascii nocase
+
+        
+        $ps = "Get-ADComputer -filter * -Searchbase '%s' | Foreach-Object { Invoke-GPUpdate -computer $_.name -force -RandomDelayInMinutes 0}" ascii nocase
+
+        
+        $ua1 = "Mozilla/5.0 (Windows NT 6.1)" ascii nocase
+        $ua2 = "AppleWebKit/587.38 (KHTML, like Gecko)" ascii nocase
+        $ua3 = "Chrome/91.0.4472.77 Safari/537.36" ascii nocase
+        $ua4 = "Edge/91.0.864.37" ascii nocase
+        $ua5 = "Firefox/89.0 Gecko/20100101" ascii nocase
+
+    condition:
+        (
+            // Match known SHA256 LockBit samples
+            hash.sha256(0, filesize) == "80e8defa5377018b093b5b90de0f2957f7062144c83a09a56bba1fe4eda932ce" or
+            hash.sha256(0, filesize) == "0d38f8bf831f1dbbe9a058930127171f24c3df8dae81e6aa66c430a63cbe0509" or
+            hash.sha256(0, filesize) == "74d9a91c4e6d2c15f3b6f8e7679e624fa3f2e7cb7315c1e48801cb8c6a86d2d2" or
+             or 2 of ($safe*) or
+            3 of ($cmd*) or
+            5 of ($reg*) or
+            $note or 
+            $ps or
+            2 of ($ua*)
+
+        }
