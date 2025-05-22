@@ -4,7 +4,7 @@ rule Bifrost
         description = "Detects Bifrost "
         author = "Jayesh Choudhary"
        
-        reference = "https://blog.talosintelligence.com, https://cybermaterial.com,https://securitynews.neuracyb.com/new-bifrost-malware-for-linux-a-deceptive-tactic,https://unit42.paloaltonetworks.com/new-linux-variant-bifrost-malware/?utm_source=chatgpt.com"
+        reference = "https://blog.talosintelligence.com, https://cybermaterial.com,https://securitynews.neuracyb.com/new-bifrost-malware-for-linux-a-deceptive-tactic,https://unit42.paloaltonetworks.com/new-linux-variant-bifrost-malware"
 
     strings:
         
