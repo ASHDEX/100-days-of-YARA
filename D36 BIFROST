@@ -1,0 +1,32 @@
+rule Bifrost
+{
+    meta:
+        description = "Detects Bifrost "
+        author = "Jayesh Choudhary"
+       
+        reference = "https://blog.talosintelligence.com, https://cybermaterial.com,https://securitynews.neuracyb.com/new-bifrost-malware-for-linux-a-deceptive-tactic,https://unit42.paloaltonetworks.com/new-linux-variant-bifrost-malware/?utm_source=chatgpt.com"
+
+    strings:
+        
+        $str1 = "Bifrost" nocase
+        $str2 = "Spy-Net" nocase
+        $str3 = "Spy-Net_Sair" nocase
+        $str4 = "BifrostMutex" nocase
+        $str5 = "FileNameAtual" wide ascii
+        $str6 = "HKCU\\SOFTWARE\\FORUM SERVER" wide ascii
+        $str7 = "HKLM\\SOFTWARE\\WOW6432NODE\\FORUM SERVER" wide ascii
+        $str8 = "svchost.exe" wide ascii
+        $str9 = "TCP Port: 81" ascii
+        $str10 = "download.vmfare.com" ascii
+        $str11 = "UPX0" ascii
+        $str12 = "rc4" nocase
+
+        
+        $mutex1 = "Global\\71b0ff21-e3cc-11ed-9660-001517619ccc"
+        $mutex2 = "Global\\a08a09e1-e3cc-11ed-9660-0015178afdb9"
+        $mutex3 = "Global\\6bc18981-e3cd-11ed-9660-0015170e0b8c"
+        $mutex4 = "Global\\1dc44421-e3cd-11ed-9660-0015177d9b69"
+
+    condition:
+        uint16(0) == 0x5A4D and 4 of ($str*) or 2 of ($mutex*)
+}
