@@ -1,0 +1,23 @@
+rule LaZagne
+{
+    meta:
+        description = "Detects LaZagne c"
+        author = "jayesh "
+        reference = "https://github.com/AlessandroZ/LaZagne,https://blackpointcyber.com/blog/mimikatz-lazagne-credentialsfileview-raspberry-robin-scheduled-tasks-abuse-soc-incidents-blackpoint-apg,"
+       
+
+    strings:
+        $s1 = "LaZagneProject" ascii nocase
+        $s2 = "Retrieve all passwords" ascii
+        $s3 = "Domain: %s, Login: %s, Password: %s" ascii
+        $s4 = "GenericCredential" ascii
+        $s5 = "WindowsVault" ascii
+        $python1 = "from win32cred import" ascii
+        $python2 = "import sqlite3" ascii
+        $python3 = "from ctypes import" ascii
+
+    condition:
+        (uint16(0) == 0x5A4D) and 
+        (3 of ($s*) or all of ($python*)) or
+        (hash.sha256(0, filesize) == "467e49f1f795c1b08245ae621c59cdf06df630fc1631dc0059da9a032858a486")
+}
