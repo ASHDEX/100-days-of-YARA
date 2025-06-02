@@ -1,0 +1,33 @@
+rule Powershell_Empire
+{
+    meta:
+        description = "Detects PowerShell Empire related function calls and encoded launcher patterns"
+        author = "Jayesh Choudhary"
+        
+    
+    strings:
+       
+        $str1 = "Invoke-Shellcode" nocase
+        $str2 = "Invoke-ReflectivePEInjection" nocase
+        $str3 = "Get-Keystrokes" nocase
+        $str4 = "Invoke-BypassUAC" nocase
+        $str5 = "Invoke-TokenManipulation" wide ascii
+        $str6 = "Invoke-DllInjection" wide ascii
+        $str7 = "Get-GPPPassword" wide ascii
+        $str8 = "Invoke-PsExec" wide ascii
+        $str9 = "Invoke-BackdoorLNK" ascii
+        $str10 = "Invoke-EventVwrBypass" ascii
+        $str11 = "Invoke-WmiCommand" ascii
+        $str12 = "Invoke-ProcessInjection" nocase
+
+        
+        $ps1 = "powershell -nop -w hidden -enc " ascii
+        $ps2 = "powershell.exe -ExecutionPolicy Bypass -NoProfile -WindowStyle Hidden -EncodedCommand" ascii
+        $ps3 = "IEX ((New-Object Net.WebClient).DownloadString" ascii
+        $ps4 = "Import-Module ./Invoke-Mimikatz.ps1" ascii
+        $ps5 = "Invoke-Mimikatz -Command \"sekurlsa::logonpasswords\"" ascii
+        $ps6 = "Invoke-TokenManipulation -ImpersonateUser -Username \"administrator\"" ascii
+
+    condition:
+        (4 of ($str*)) or (3 of ($ps*))
+}
