@@ -1,0 +1,54 @@
+rule SliverC2
+{
+    meta:
+        description = "Detects Sliver C2 "
+        author = "Jayesh Choudhary"
+        references = "https://github.com/BishopFox/sliver, https://sliver.sh/docs/, https://github.com/BishopFox/sliver/releases, https://thedfirreport.com/2023/04/17/sliver-c2-in-the-wild/, https://redcanary.com/blog/sliver-c2-framework/, https://www.huntress.com/blog/red-vs-blue-sliver-vs-cobalt-strike"
+
+    strings:
+        
+        $s1  = "sliver-agent" ascii nocase
+        $s2  = "sliver-client" ascii nocase
+        $s3  = "sliver-server" ascii nocase
+        $s4  = "beacon.go" ascii
+        $s5  = "sessionHandler.go" ascii
+        $s6  = "sliver.yaml" ascii
+        $s7  = "/stage" ascii
+        $s8  = "/beacon" ascii
+        $s9  = "/tasks" ascii
+        $s10 = "sliver.pem" ascii
+        $s11 = "sliver> " ascii
+        $s12 = "C=US, O=Sliver" ascii
+
+        
+        $go1 = "__gopclntab" ascii
+        $go2 = "runtime.main" ascii
+        $go3 = "main.main" ascii
+
+        
+        $ja3 = "b2e12f3118d38861e0b2bd38d009c9ae" ascii
+
+        
+        $endpoint1 = "/stage" ascii nocase
+        $endpoint2 = "/connect" ascii nocase
+        $endpoint3 = "/tasks" ascii nocase
+        $endpoint4 = "/beacon" ascii nocase
+
+        
+        $ps1 = "powershell -nop -w hidden -enc " ascii
+        $ps2 = "cmd.exe /c rundll32.exe" ascii
+        $ps3 = "regsvr32.exe /s" ascii
+        $ps4 = "schtasks /create /tn \"SliverTask\" /tr \"C:\\Users\\Public\\agent.exe\" /sc onlogon /ru \"SYSTEM\"" ascii
+
+        
+        $reg1 = "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run" ascii nocase
+        $reg2 = "\"SliverAgent\" = \"powershell -w hidden -ep bypass -enc " ascii nocase
+        $reg3 = "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Schedule\\TaskCache\\Tasks\\" ascii
+
+    condition:
+        (4 of ($s*)) or
+        (2 of ($ps*)) or
+        (2 of ($endpoint*)) or
+        (1 of ($reg*)) or
+        (1 of ($go*))
+}
